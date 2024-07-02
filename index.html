@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challan Management App</title>
+    <style>
+      body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Challan Management App</h2>
+        <form id="challanForm">
+            <label for="date">Date:</label>
+            <input type="date" id="date" required><br><br>
+
+            <label for="time">Time:</label>
+            <input type="time" id="time" required><br><br>
+
+            <label for="challanNumber">Challan Number:</label>
+            <input type="text" id="challanNumber" required><br><br>
+
+            <label for="size">Size:</label>
+            <select id="size">
+                <option value="15mm">15mm</option>
+                <option value="25mm">25mm</option>
+                <option value="32mm">32mm</option>
+                <option value="50mm">50mm</option>
+                <option value="65mm">65mm</option>
+                <option value="100mm">100mm</option>
+            </select><br><br>
+
+            <label for="itemName">Item Name:</label>
+            <input type="text" id="itemName" required><br><br>
+
+            <label for="description">Description:</label>
+            <textarea id="description"></textarea><br><br>
+
+            <label for="person">Person:</label>
+            <select id="person" required>
+                <option value="Heeralaal">Heeralaal</option>
+                <option value="Rohit Helper">Rohit Helper</option>
+                <option value="Chandan">Chandan</option>
+            </select><br><br>
+
+            <label for="outQty">Out Quantity:</label>
+            <input type="number" id="outQty" required><br><br>
+
+            <label for="outWeight">Out Weight:</label>
+            <input type="number" id="outWeight" required><br><br>
+
+            <label for="inQty">In Quantity:</label>
+            <input type="number" id="inQty" ><br><br>
+
+            <label for="inWeight">In Weight:</label>
+            <input type="number" id="inWeight"><br><br>
+
+            <button type="submit">Save</button>
+        </form>
+
+        <div id="challanList">
+            <!-- Display data here -->
+        </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+    const challanForm = document.getElementById('challanForm');
+    const challanList = document.getElementById('challanList');
+    let serialNumber = 1;
+
+    // Load existing data from localStorage
+    const savedChallans = JSON.parse(localStorage.getItem('challans')) || [];
+
+    // Function to display data in table format
+    function displayChallans() {
+        challanList.innerHTML = `
+            <table>
+                <tr>
+                    <th>Serial No.</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Challan Number</th>
+                    <th>Size</th>
+                    <th>Item Name</th>
+                    <th>Description</th>
+                    <th>Person</th>
+                    <th>Out Qty</th>
+                    <th>Out Weight</th>
+                    <th>In Qty</th>
+                    <th>In Weight</th>
+                    <th>Action</th>
+                </tr>
+                ${savedChallans.map(challan => `
+                    <tr>
+                        <td>${challan.serial}</td>
+                        <td>${challan.date}</td>
+                        <td>${challan.time}</td>
+                        <td>${challan.challanNumber}</td>
+                        <td>${challan.size}</td>
+                        <td>${challan.itemName}</td>
+                        <td>${challan.description}</td>
+                        <td>${challan.person}</td>
+                        <td>${challan.outQty}</td>
+                        <td>${challan.outWeight}</td>
+                        <td>${challan.inQty}</td>
+                        <td>${challan.inWeight}</td>
+                        <td><button onclick="editChallan(${challan.serial})">Edit</button></td>
+                    </tr>
+                `).join('')}
+            </table>
+        `;
+    }
+
+    // Initial display of saved data
+    displayChallans();
+
+    // Function to handle form submission
+    challanForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Retrieve form values
+        const date = document.getElementById('date').value;
+        const time = document.getElementById('time').value;
+        const challanNumber = document.getElementById('challanNumber').value;
+        const size = document.getElementById('size').value;
+        const itemName = document.getElementById('itemName').value;
+        const description = document.getElementById('description').value;
+        const person = document.getElementById('person').value;
+        const outQty = document.getElementById('outQty').value;
+        const outWeight = document.getElementById('outWeight').value;
+        const inQty = document.getElementById('inQty').value;
+        const inWeight = document.getElementById('inWeight').value;
+
+        // Create new challan object
+        const newChallan = {
+            serial: serialNumber++,
+            date,
+            time,
+            challanNumber,
+            size,
+            itemName,
+            description,
+            person,
+            outQty,
+            outWeight,
+            inQty,
+            inWeight
+        };
+
+        // Add new challan to the array
+        savedChallans.push(newChallan);
+
+        // Save to localStorage
+        localStorage.setItem('challans', JSON.stringify(savedChallans));
+
+        // Display updated data
+        displayChallans();
+
+        // Reset form fields
+        challanForm.reset();
+    });
+
+    // Function to edit a challan
+    window.editChallan = function(serial) {
+        const index = savedChallans.findIndex(challan => challan.serial === serial);
+        if (index !== -1) {
+            const editedChallan = savedChallans[index];
+            // Populate form fields with selected challan's data
+            document.getElementById('date').value = editedChallan.date;
+            document.getElementById('time').value = editedChallan.time;
+            document.getElementById('challanNumber').value = editedChallan.challanNumber;
+            document.getElementById('size').value = editedChallan.size;
+            document.getElementById('itemName').value = editedChallan.itemName;
+            document.getElementById('description').value = editedChallan.description;
+            document.getElementById('person').value = editedChallan.person;
+            document.getElementById('outQty').value = editedChallan.outQty;
+            document.getElementById('outWeight').value = editedChallan.outWeight;
+            document.getElementById('inQty').value = editedChallan.inQty;
+            document.getElementById('inWeight').value = editedChallan.inWeight;
+
+            // Remove the edited challan from the list
+            savedChallans.splice(index, 1);
+
+            // Update localStorage
+            localStorage.setItem('challans', JSON.stringify(savedChallans));
+
+            // Display updated data
+            displayChallans();
+        }
+    };
+});
+    </script>
+</body>
+</html>
