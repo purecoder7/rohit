@@ -1,5 +1,17 @@
 /* Custom CSS for additional styling */
 
+/* Reset and base styles */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+}
+
 /* Smooth scrolling */
 html {
     scroll-behavior: smooth;
@@ -99,6 +111,7 @@ textarea:focus {
 /* Mobile menu animation */
 #mobile-menu {
     transition: all 0.3s ease;
+    width: 100%;
 }
 
 #mobile-menu.show {
@@ -209,4 +222,62 @@ textarea:focus {
     html {
         scroll-behavior: auto;
     }
+}
+
+/* Mobile responsive improvements */
+@media (max-width: 640px) {
+    .tech-icon {
+        padding: 0.5rem;
+    }
+    
+    .tech-icon i {
+        font-size: 2rem !important;
+    }
+    
+    .tech-icon p {
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+    }
+    
+    .project-card,
+    .service-card,
+    .testimonial-card {
+        margin-bottom: 1rem;
+    }
+    
+    h1 {
+        font-size: 2.5rem !important;
+    }
+    
+    h2 {
+        font-size: 1.75rem !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .max-w-7xl {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    section {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+}
+
+/* Ensure full width on all screen sizes */
+.w-full {
+    width: 100% !important;
+}
+
+/* Fix any potential margin issues */
+body, html {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+section, nav, footer {
+    margin: 0 !important;
+    width: 100% !important;
 }
